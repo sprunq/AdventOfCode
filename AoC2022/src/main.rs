@@ -1,6 +1,7 @@
 pub mod aoc1;
 pub mod aoc2;
+pub mod aoc3;
 
 fn main() {
-    aoc2::p2();
+    aoc3::p2();
 }
