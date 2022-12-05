@@ -5,3 +5,12 @@ version = 3
 [[package]]
 name = "aoc2022"
 version = "0.1.0"
+dependencies = [
+ "strfmt",
+]
+
+[[package]]
+name = "strfmt"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "26cdabcdab6da7e8c2ac1160e917ec83e78bbe3e10325e17d532718c67a4828f"
