@@ -38,13 +38,13 @@ pub fn p1() {
 /// Optimized for very big inputs
 /// https://www.reddit.com/r/adventofcode/comments/zd1hqy/comment/iyzvsnp/?utm_source=share&utm_medium=web2x&context=3
 /// 6mb and 88mb input
-/// 6mb: 1.4s
+/// 6mb: 374ms
 /// 88mb: 236s (1.500.000 moves)
 pub fn p2() {
     let mut boxes = vec![Vec::<u8>::new(); 9];
     let mut swap_buffer = vec![0u8; 100_000_000];
 
-    include_bytes!("88mb\\boxes.txt")
+    include_bytes!("6mb\\boxes.txt")
         .split(|b| b == &b'\n')
         .for_each(|line| {
             line.iter().enumerate().for_each(|(idx, c)| {
@@ -57,7 +57,7 @@ pub fn p2() {
         row.reverse();
     }
 
-    let moves = include_str!("88mb\\moves.txt")
+    let moves = include_str!("6mb\\moves.txt")
         .lines()
         .map(|a| a.split(' '))
         .map(|b| {
