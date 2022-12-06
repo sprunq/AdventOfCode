@@ -1,5 +1,4 @@
 use crate::Part;
-use std::fs;
 
 #[derive(Default)]
 pub struct Day3 {}
@@ -15,32 +14,32 @@ impl Part for Day3 {
 }
 
 pub fn p1() -> String {
-    let input = fs::read_to_string("src\\aoc3\\input.txt").expect("Cannot find file");
-    let matches: Vec<(&str, &str)> = input.split('\n').map(|f| f.split_at(f.len() / 2)).collect();
-
     let mut sum = 0;
-    for str_tup in &matches {
-        let mut b0 = str_tup.0.as_bytes().to_vec();
-        let mut b1 = str_tup.1.as_bytes().to_vec();
-        b0.sort();
-        b0.dedup();
-        b1.sort();
-        b1.dedup();
+    include_str!("input.txt")
+        .split('\n')
+        .map(|f| f.split_at(f.len() / 2))
+        .for_each(|str_tup| {
+            let mut b0 = str_tup.0.as_bytes().to_vec();
+            let mut b1 = str_tup.1.as_bytes().to_vec();
+            b0.sort();
+            b0.dedup();
+            b1.sort();
+            b1.dedup();
 
-        'outer: for c1 in &b0 {
-            for c2 in &b1 {
-                if c1 == c2 {
-                    let ch = *c1 as char;
-                    let mut char_prio = ch.to_digit(36).unwrap() - 9;
-                    if ch.is_uppercase() {
-                        char_prio += 26;
+            'outer: for c1 in &b0 {
+                for c2 in &b1 {
+                    if c1 == c2 {
+                        let ch = *c1 as char;
+                        let mut char_prio = ch.to_digit(36).unwrap() - 9;
+                        if ch.is_uppercase() {
+                            char_prio += 26;
+                        }
+                        sum += char_prio;
+                        break 'outer;
                     }
-                    sum += char_prio;
-                    break 'outer;
                 }
             }
-        }
-    }
+        });
 
     format!("{}", sum)
 }
