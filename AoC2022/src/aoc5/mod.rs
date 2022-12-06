@@ -1,6 +1,21 @@
-pub fn p1() {
+use crate::Part;
+
+#[derive(Default)]
+pub struct Day5 {}
+
+impl Part for Day5 {
+    fn p1(&self) -> String {
+        p1()
+    }
+
+    fn p2(&self) -> String {
+        p2()
+    }
+}
+
+pub fn p1() -> String {
     let mut boxes = vec![Vec::<u8>::new(); 9];
-    include_bytes!("6mb\\boxes.txt")
+    include_bytes!("boxes.txt")
         .split(|b| b == &b'\n')
         .for_each(|line| {
             line.iter().enumerate().for_each(|(idx, c)| {
@@ -10,7 +25,7 @@ pub fn p1() {
             });
         });
 
-    let moves = include_str!("6mb\\moves.txt")
+    let moves = include_str!("moves.txt")
         .lines()
         .map(|a| a.split(' '))
         .map(|b| {
@@ -32,7 +47,10 @@ pub fn p1() {
         }
     }
 
-    boxes.iter().for_each(|x| print!("{}", x.last().unwrap()));
+    boxes
+        .iter()
+        .map(|x| format!("{}", x.last().unwrap()))
+        .collect::<String>()
 }
 
 /// Optimized for very big inputs
@@ -40,7 +58,7 @@ pub fn p1() {
 /// 6mb and 88mb input
 /// 6mb: 374ms
 /// 88mb: 236s (1.500.000 moves)
-pub fn p2() {
+pub fn p2() -> String {
     let mut boxes = vec![Vec::<u8>::new(); 9];
     let mut swap_buffer = vec![0u8; 100_000_000];
 
@@ -71,11 +89,7 @@ pub fn p2() {
         })
         .collect::<Vec<_>>();
 
-    let total_moves = moves.len();
-    for (idx, mov) in moves.iter().enumerate() {
-        if idx % 1_000 == 0 {
-            print!("Running move {}/{}\n", idx, total_moves)
-        }
+    for mov in moves.iter() {
         let [amount, from, to] = mov;
         let len_to_swap = boxes[from - 1].len();
         let swap_buffer = &mut swap_buffer[0..*amount];
@@ -86,5 +100,6 @@ pub fn p2() {
 
     boxes
         .iter()
-        .for_each(|x| print!("{}", *x.last().unwrap() as char));
+        .map(|x| format!("{}", *x.last().unwrap() as char))
+        .collect::<String>()
 }

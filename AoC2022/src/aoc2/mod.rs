@@ -1,4 +1,18 @@
+use crate::Part;
 use std::{fs, str::FromStr};
+
+#[derive(Default)]
+pub struct Day2 {}
+
+impl Part for Day2 {
+    fn p1(&self) -> String {
+        p1()
+    }
+
+    fn p2(&self) -> String {
+        p2()
+    }
+}
 
 #[derive(Debug, Clone, Copy)]
 enum RPS {
@@ -68,7 +82,7 @@ fn move_for_result(opponent: RPS, expected_result: MatchResult) -> RPS {
     }
 }
 
-pub fn p1() {
+pub fn p1() -> String {
     let input = fs::read_to_string("src\\aoc2\\input.txt").expect("Cannot find file");
     let matches: Vec<&str> = input.split('\n').collect();
     let mut scores = 0;
@@ -81,10 +95,10 @@ pub fn p1() {
         let score = res as u32 + my_move as u32;
         scores += score;
     }
-    println!("{}", scores);
+    format!("{}", scores)
 }
 
-pub fn p2() {
+pub fn p2() -> String {
     let input = fs::read_to_string("src\\aoc2\\input.txt").expect("Cannot find file");
     let matches: Vec<&str> = input.split('\n').collect();
     let mut scores = 0;
@@ -97,5 +111,5 @@ pub fn p2() {
         let score = expected_result as u32 + move_to_make as u32;
         scores += score;
     }
-    println!("{}", scores);
+    format!("{}", scores)
 }

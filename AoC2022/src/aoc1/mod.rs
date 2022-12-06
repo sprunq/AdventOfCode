@@ -1,6 +1,20 @@
+use crate::Part;
 use std::fs;
 
-pub fn p1() {
+#[derive(Default)]
+pub struct Day1 {}
+
+impl Part for Day1 {
+    fn p1(&self) -> String {
+        p1()
+    }
+
+    fn p2(&self) -> String {
+        p2()
+    }
+}
+
+pub fn p1() -> String {
     let input = fs::read_to_string("src\\aoc1\\input.txt").expect("Cannot find file");
     let split: Vec<&str> = input.split("\n\n").collect();
     let mut int_vec = vec![];
@@ -12,10 +26,10 @@ pub fn p1() {
             .sum::<i64>();
         int_vec.push(ints);
     }
-    println!("{:?}", int_vec.iter().max().unwrap());
+    format!("{:?}", int_vec.iter().max().unwrap())
 }
 
-pub fn p2() {
+pub fn p2() -> String {
     let input = fs::read_to_string("src\\aoc1\\input.txt").expect("Cannot find file");
     let split: Vec<&str> = input.split("\n\n").collect();
     let mut int_vec = vec![];
@@ -28,5 +42,5 @@ pub fn p2() {
         int_vec.push(ints);
     }
     int_vec.sort();
-    println!("{:?}", int_vec.iter().rev().take(3).sum::<i64>());
+    format!("{:?}", int_vec.iter().rev().take(3).sum::<i64>())
 }

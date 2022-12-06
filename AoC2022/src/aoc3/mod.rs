@@ -1,6 +1,20 @@
+use crate::Part;
 use std::fs;
 
-pub fn p1() {
+#[derive(Default)]
+pub struct Day3 {}
+
+impl Part for Day3 {
+    fn p1(&self) -> String {
+        p1()
+    }
+
+    fn p2(&self) -> String {
+        p2()
+    }
+}
+
+pub fn p1() -> String {
     let input = fs::read_to_string("src\\aoc3\\input.txt").expect("Cannot find file");
     let matches: Vec<(&str, &str)> = input.split('\n').map(|f| f.split_at(f.len() / 2)).collect();
 
@@ -28,10 +42,10 @@ pub fn p1() {
         }
     }
 
-    println!("{}", sum);
+    format!("{}", sum)
 }
 
-pub fn p2() {
+pub fn p2() -> String {
     let matches = include_bytes!("input.txt")
         .split(|b| *b == b'\n')
         .collect::<Vec<_>>();
@@ -52,5 +66,5 @@ pub fn p2() {
         })
         .sum();
 
-    println!("{}", sum);
+    format!("{}", sum)
 }
