@@ -1,5 +1,4 @@
 use crate::Part;
-use std::fs;
 
 #[derive(Default)]
 pub struct Day1 {}
@@ -15,32 +14,19 @@ impl Part for Day1 {
 }
 
 pub fn p1() -> String {
-    let input = fs::read_to_string("src\\aoc1\\input.txt").expect("Cannot find file");
-    let split: Vec<&str> = input.split("\n\n").collect();
-    let mut int_vec = vec![];
-    for elem in split {
-        let clean: Vec<_> = elem.split('\n').collect();
-        let ints = clean
-            .iter()
-            .map(|f| f.parse::<i64>().unwrap_or(0))
-            .sum::<i64>();
-        int_vec.push(ints);
-    }
-    format!("{:?}", int_vec.iter().max().unwrap())
+    let res = include_str!("input.txt")
+        .split("\n\n")
+        .map(|elem| elem.lines().map(|f| f.parse::<u32>().unwrap()).sum::<u32>())
+        .max()
+        .unwrap();
+    format!("{:?}", res)
 }
 
 pub fn p2() -> String {
-    let input = fs::read_to_string("src\\aoc1\\input.txt").expect("Cannot find file");
-    let split: Vec<&str> = input.split("\n\n").collect();
-    let mut int_vec = vec![];
-    for elem in split {
-        let clean: Vec<_> = elem.split('\n').collect();
-        let ints = clean
-            .iter()
-            .map(|f| f.parse::<i64>().unwrap_or(0))
-            .sum::<i64>();
-        int_vec.push(ints);
-    }
-    int_vec.sort();
-    format!("{:?}", int_vec.iter().rev().take(3).sum::<i64>())
+    let mut v = include_str!("input.txt")
+        .split("\n\n")
+        .map(|elem| elem.lines().map(|f| f.parse::<u32>().unwrap()).sum::<u32>())
+        .collect::<Vec<_>>();
+    v.sort();
+    format!("{:?}", v.into_iter().rev().take(3).sum::<u32>())
 }
