@@ -13,6 +13,7 @@ impl Part for Day3 {
     }
 }
 
+// improve this at some point
 pub fn p1() -> String {
     let mut sum = 0;
     include_str!("input.txt")
