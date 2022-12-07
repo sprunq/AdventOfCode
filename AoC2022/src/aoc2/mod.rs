@@ -1,15 +1,15 @@
-use crate::Part;
+use crate::AocDay;
 use std::{fs, str::FromStr};
 
 #[derive(Default)]
 pub struct Day2 {}
 
-impl Part for Day2 {
-    fn p1(&self) -> String {
+impl AocDay for Day2 {
+    fn part_1(&self) -> String {
         p1_fast()
     }
 
-    fn p2(&self) -> String {
+    fn part_2(&self) -> String {
         p2_fast()
     }
 }

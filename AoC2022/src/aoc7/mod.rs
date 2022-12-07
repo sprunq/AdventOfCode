@@ -1,14 +1,14 @@
-use crate::Part;
+use crate::AocDay;
 
 #[derive(Default)]
 pub struct Day7 {}
 
-impl Part for Day7 {
-    fn p1(&self) -> String {
+impl AocDay for Day7 {
+    fn part_1(&self) -> String {
         p1()
     }
 
-    fn p2(&self) -> String {
+    fn part_2(&self) -> String {
         p2()
     }
 }
@@ -19,7 +19,7 @@ pub fn p1() -> String {
     let mut sum = 0;
     input.next().unwrap();
     stack.push(0);
-    while let Some(l) = input.next().or_else(|| {
+    while let Some(l) = input.next().or({
         if stack.len() > 1 {
             Some("$ cd ..")
         } else {
@@ -38,10 +38,10 @@ pub fn p1() -> String {
                 stack.push(0);
             }
         } else if l.starts_with("$ ls") {
-            while !input.peek().unwrap_or(&"$").starts_with("$") {
+            while !input.peek().unwrap_or(&"$").starts_with('$') {
                 let next = input.next().unwrap();
                 if !next.starts_with("dir") {
-                    let file_size = next.split(" ").next().unwrap();
+                    let file_size = next.split(' ').next().unwrap();
                     let s = file_size.parse::<usize>().unwrap();
                     *stack.last_mut().unwrap() += s;
                 }
@@ -59,7 +59,7 @@ pub fn p2() -> String {
     let mut sizes = Vec::new();
     input.next().unwrap();
     stack.push(0);
-    while let Some(l) = input.next().or_else(|| {
+    while let Some(l) = input.next().or({
         if stack.len() > 1 {
             Some("$ cd ..")
         } else {
@@ -76,10 +76,10 @@ pub fn p2() -> String {
                 stack.push(0);
             }
         } else if l.starts_with("$ ls") {
-            while !input.peek().unwrap_or(&"$").starts_with("$") {
+            while !input.peek().unwrap_or(&"$").starts_with('$') {
                 let next = input.next().unwrap();
                 if !next.starts_with("dir") {
-                    let file_size = next.split(" ").next().unwrap();
+                    let file_size = next.split(' ').next().unwrap();
                     let s = file_size.parse::<usize>().unwrap();
                     *stack.last_mut().unwrap() += s;
                 }

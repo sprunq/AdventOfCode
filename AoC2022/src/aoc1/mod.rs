@@ -1,14 +1,14 @@
-use crate::Part;
+use crate::AocDay;
 
 #[derive(Default)]
 pub struct Day1 {}
 
-impl Part for Day1 {
-    fn p1(&self) -> String {
+impl AocDay for Day1 {
+    fn part_1(&self) -> String {
         p1()
     }
 
-    fn p2(&self) -> String {
+    fn part_2(&self) -> String {
         p2()
     }
 }

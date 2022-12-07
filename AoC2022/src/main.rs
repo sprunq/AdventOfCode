@@ -4,7 +4,9 @@ use aoc3::Day3;
 use aoc4::Day4;
 use aoc5::Day5;
 use aoc6::Day6;
+use clap::{command, value_parser, Arg, ArgAction};
 use std::{
+    ops::RangeInclusive,
     time::{Duration, Instant},
     vec,
 };
@@ -22,31 +24,75 @@ use comfy_table::{
     Table,
 };
 
-const BENCHMARK: bool = true;
-
 fn main() {
-    if BENCHMARK {
-        benchmark_all();
+    let matches = command!()
+        .arg(
+            Arg::new("benchmark")
+                .short('b')
+                .long("benchmark")
+                .action(ArgAction::SetTrue),
+        )
+        .arg(
+            Arg::new("day")
+                .short('d')
+                .long("day")
+                .value_parser(value_parser!(usize))
+                .action(ArgAction::Set),
+        )
+        .arg(
+            Arg::new("part")
+                .short('p')
+                .long("part")
+                .value_parser(value_parser!(usize))
+                .action(ArgAction::Set),
+        )
+        .get_matches();
+
+    if matches.get_flag("benchmark") {
+        run_benchmark_all(1..=7, 1000);
     } else {
-        let now = Instant::now();
-        let part = Day2::default();
-        print!("{}", part.p2());
-        println!("\n{:?}", now.elapsed())
+        run_one_part(matches);
     }
 }
 
-fn benchmark_all() {
-    let runs_per_x = 1000;
-    let all_parts: Vec<Box<dyn Part>> = vec![
-        Box::new(Day1::default()),
-        Box::new(Day2::default()),
-        Box::new(Day3::default()),
-        Box::new(Day4::default()),
-        Box::new(Day5::default()),
-        Box::new(Day6::default()),
-        Box::new(Day7::default()),
-    ];
+pub trait AocDay {
+    fn part_1(&self) -> String;
+    fn part_2(&self) -> String;
+}
 
+fn get_day(day: usize) -> Box<dyn AocDay> {
+    match day {
+        1 => Box::new(Day1::default()),
+        2 => Box::new(Day2::default()),
+        3 => Box::new(Day3::default()),
+        4 => Box::new(Day4::default()),
+        5 => Box::new(Day5::default()),
+        6 => Box::new(Day6::default()),
+        7 => Box::new(Day7::default()),
+        _ => panic!("Invalid day"),
+    }
+}
+
+fn run_part(part: usize, day_ex: Box<dyn AocDay>) -> String {
+    match part {
+        1 => day_ex.part_1(),
+        2 => day_ex.part_2(),
+        _ => panic!("Invalid part"),
+    }
+}
+
+fn run_one_part(matches: clap::ArgMatches) {
+    let day: usize = *matches.get_one("day").expect("day is required");
+    let day_ex = get_day(day);
+    let part: usize = *matches.get_one("part").expect("part is required");
+    let now = Instant::now();
+    let result = run_part(part, day_ex);
+    let elapsed = now.elapsed();
+    println!("Result:\t{}", result);
+    println!("Time:  \t{:?}", elapsed)
+}
+
+fn run_benchmark_all(days: RangeInclusive<usize>, runs_per_part: u32) {
     let mut table = Table::new();
     table
         .load_preset(UTF8_FULL)
@@ -56,17 +102,18 @@ fn benchmark_all() {
     let mut total_duration_p1 = Duration::new(0, 0);
     let mut total_duration_p2 = Duration::new(0, 0);
     let mut time_data = Vec::new();
-    for (day, part) in all_parts.iter().enumerate() {
+    let all_days = days.map(get_day).collect::<Vec<_>>();
+    for (day, part) in all_days.iter().enumerate() {
         let now1 = Instant::now();
-        for _ in 0..runs_per_x {
-            part.p1();
+        for _ in 0..runs_per_part {
+            part.part_1();
         }
-        let p1_elapsed = now1.elapsed() / runs_per_x;
+        let p1_elapsed = now1.elapsed() / runs_per_part;
         let now2 = Instant::now();
-        for _ in 0..runs_per_x {
-            part.p2();
+        for _ in 0..runs_per_part {
+            part.part_2();
         }
-        let p2_elapsed = now2.elapsed() / runs_per_x;
+        let p2_elapsed = now2.elapsed() / runs_per_part;
         total_duration_p1 += p1_elapsed;
         total_duration_p2 += p2_elapsed;
         time_data.push((
@@ -98,9 +145,4 @@ fn benchmark_all() {
     ]);
 
     println!("\n{table}");
-}
-
-pub trait Part {
-    fn p1(&self) -> String;
-    fn p2(&self) -> String;
 }
