@@ -25,8 +25,8 @@ fn main() {
         benchmark_all();
     } else {
         let now = Instant::now();
-        let part = Day7::default();
-        print!("{}", part.p2());
+        let part = Day5::default();
+        print!("{}", part.p1());
         println!("\n{:?}", now.elapsed())
     }
 }
