@@ -6,13 +6,33 @@ pub struct Day2 {}
 
 impl Part for Day2 {
     fn p1(&self) -> String {
-        p1()
+        p1_fast()
     }
 
     fn p2(&self) -> String {
-        p2()
+        p2_fast()
     }
 }
+
+pub fn p1_fast() -> String {
+    let score = include_bytes!("input.txt")
+        .split(|b| *b == b'\n')
+        .map(|line| ((line[0] - b'A') as i16, (line[2] - b'X') as i16))
+        .map(|(opp_move, own_move)| 1 + own_move + 3 * ((1 + own_move - opp_move).rem_euclid(3)))
+        .sum::<i16>();
+    format!("{}", score)
+}
+
+pub fn p2_fast() -> String {
+    let score = include_bytes!("input.txt")
+        .split(|b| *b == b'\n')
+        .map(|line| ((line[0] - b'A') as i16, (line[2] - b'X') as i16))
+        .map(|(opp_move, own_move)| 1 + own_move + 3 * ((2 + own_move + opp_move) % 3))
+        .sum::<i16>();
+    format!("{}", score)
+}
+
+// old solution
 
 #[derive(Debug, Clone, Copy)]
 enum RPS {

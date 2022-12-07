@@ -16,7 +16,11 @@ pub mod aoc5;
 pub mod aoc6;
 pub mod aoc7;
 use crate::aoc7::Day7;
-use comfy_table::{modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Table};
+use comfy_table::{
+    modifiers::{UTF8_ROUND_CORNERS, UTF8_SOLID_INNER_BORDERS},
+    presets::UTF8_FULL,
+    Table,
+};
 
 const BENCHMARK: bool = true;
 
@@ -25,8 +29,8 @@ fn main() {
         benchmark_all();
     } else {
         let now = Instant::now();
-        let part = Day5::default();
-        print!("{}", part.p1());
+        let part = Day2::default();
+        print!("{}", part.p2());
         println!("\n{:?}", now.elapsed())
     }
 }
@@ -46,10 +50,12 @@ fn benchmark_all() {
     let mut table = Table::new();
     table
         .load_preset(UTF8_FULL)
+        .apply_modifier(UTF8_SOLID_INNER_BORDERS)
         .apply_modifier(UTF8_ROUND_CORNERS)
-        .set_header(vec!["Day", "Part 1", "Part 2", "Combined"]);
+        .set_header(vec!["Day", "Part 1", "Part 2", "Combined", "Relative"]);
     let mut total_duration_p1 = Duration::new(0, 0);
     let mut total_duration_p2 = Duration::new(0, 0);
+    let mut time_data = Vec::new();
     for (day, part) in all_parts.iter().enumerate() {
         let now1 = Instant::now();
         for _ in 0..runs_per_x {
@@ -63,19 +69,32 @@ fn benchmark_all() {
         let p2_elapsed = now2.elapsed() / runs_per_x;
         total_duration_p1 += p1_elapsed;
         total_duration_p2 += p2_elapsed;
-        table.add_row(vec![
+        time_data.push((
             format!("{}", day + 1),
             format!("{:?}", p1_elapsed),
             format!("{:?}", p2_elapsed),
-            format!("{:?}", p1_elapsed + p2_elapsed),
+            p1_elapsed + p2_elapsed,
+        ))
+    }
+
+    let combined_duration = total_duration_p1 + total_duration_p2;
+    for data in time_data {
+        let percentage = data.3.as_secs_f64() / combined_duration.as_secs_f64() * 100.0;
+        table.add_row(vec![
+            data.0,
+            data.1,
+            data.2,
+            format!("{:#?}", data.3),
+            format!("{:.1}%", percentage),
         ]);
     }
 
     table.add_row(vec![
         format!("Total"),
-        format!("{total_duration_p1:?}"),
-        format!("{total_duration_p2:?}"),
-        format!("{:?}", total_duration_p1 + total_duration_p2),
+        format!("{:?}", total_duration_p1),
+        format!("{:?}", total_duration_p2),
+        format!("{:?}", combined_duration),
+        "100%".to_string(),
     ]);
 
     println!("\n{table}");
