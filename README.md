@@ -1,7 +1,30 @@
 # Advent of Code
+```
+   *    *  ()   *   *
+*        * /\         *
+      *   /i\\    *  *
+    *     o/\\  *      *
+ *       ///\i\    *
+     *   /*/o\\  *    *
+   *    /i//\*\      *
+        /o/*\\i\   *
+  *    //i//o\\\\     *
+    * /*////\\\\i\*
+ *    //o//i\\*\\\   *
+   * /i///*/\\\\\o\   *
+  *    *   ||     * 
+```
 
-## 2022
-Sometimes optimized solutions in Rust
+# 2022
+
+My first year participating in the Advent of Code. 
+
+My goal this year is keeping the total runtime of all problems below 1s.
+
+__Benchmark:__ 
+
+_Average of 1000 runs on a Ryzen 5 3600 (single core)_
+
 ```
 ╭───────┬───────────┬───────────┬───────────┬──────────╮
 │ Day   │ Part 1    │ Part 2    │ Combined  │ Relative │
