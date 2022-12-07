@@ -13,34 +13,24 @@ impl Part for Day3 {
     }
 }
 
-// improve this at some point
 pub fn p1() -> String {
-    let mut sum = 0;
-    include_str!("input.txt")
-        .split('\n')
-        .map(|f| f.split_at(f.len() / 2))
-        .for_each(|str_tup| {
-            let mut b0 = str_tup.0.as_bytes().to_vec();
-            let mut b1 = str_tup.1.as_bytes().to_vec();
-            b0.sort();
-            b0.dedup();
-            b1.sort();
-            b1.dedup();
-
-            'outer: for c1 in &b0 {
-                for c2 in &b1 {
-                    if c1 == c2 {
-                        let ch = *c1 as char;
-                        let mut char_prio = ch.to_digit(36).unwrap() - 9;
-                        if ch.is_uppercase() {
-                            char_prio += 26;
-                        }
-                        sum += char_prio;
-                        break 'outer;
+    let sum = include_bytes!("input.txt")
+        .split(|b| *b == b'\n')
+        .map(|l| l.split_at(l.len() / 2))
+        .map(|(a, b)| {
+            b.iter()
+                .filter(|b| a.contains(b))
+                .map(|b| {
+                    if *b >= b'a' {
+                        (b - b'a') as i16 + 1
+                    } else {
+                        (b - b'A') as i16 + 27
                     }
-                }
-            }
-        });
+                })
+                .next()
+                .unwrap()
+        })
+        .sum::<i16>();
 
     format!("{}", sum)
 }
