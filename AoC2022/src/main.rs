@@ -14,6 +14,8 @@ pub mod aoc3;
 pub mod aoc4;
 pub mod aoc5;
 pub mod aoc6;
+pub mod aoc7;
+use crate::aoc7::Day7;
 use comfy_table::{modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Table};
 
 const BENCHMARK: bool = true;
@@ -23,7 +25,7 @@ fn main() {
         benchmark_all();
     } else {
         let now = Instant::now();
-        let part = Day4::default();
+        let part = Day7::default();
         print!("{}", part.p2());
         println!("\n{:?}", now.elapsed())
     }
@@ -38,6 +40,7 @@ fn benchmark_all() {
         Box::new(Day4::default()),
         Box::new(Day5::default()),
         Box::new(Day6::default()),
+        Box::new(Day7::default()),
     ];
 
     let mut table = Table::new();
