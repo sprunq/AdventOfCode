@@ -21,7 +21,7 @@ impl AocDay for Parts {
 pub fn p1() -> String {
     let mut boxes = vec![Vec::<u8>::new(); 9];
     let mut swap_buffer = vec![0u8; 100_000_000];
-    include_bytes!("6mb\\boxes.txt")
+    include_bytes!("boxes.txt")
         .split(|b| b == &b'\n')
         .for_each(|line| {
             line.iter().enumerate().for_each(|(idx, c)| {
@@ -34,7 +34,7 @@ pub fn p1() -> String {
         row.reverse();
     }
 
-    let moves = include_str!("6mb\\moves.txt")
+    let moves = include_str!("moves.txt")
         .lines()
         .map(|a| a.split(' '))
         .map(|b| {

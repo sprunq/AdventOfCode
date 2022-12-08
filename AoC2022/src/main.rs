@@ -43,7 +43,7 @@ fn main() {
         .get_matches();
 
     if matches.get_flag("benchmark") {
-        run_benchmark_all(1..=7, 1000);
+        run_benchmark_all(1..=8, 1000);
     } else {
         run_one_part(matches);
     }
