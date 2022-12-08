@@ -18,33 +18,33 @@ pub fn p1() -> String {
         .iter()
         .filter(|x| **x != b'\n')
         .collect::<Vec<_>>();
-    let tree_count = trees.len();
-    let grid_size = (tree_count as f64).sqrt() as usize;
-    let mut sum = 0usize;
+    let total_trees = trees.len();
+    let grid_s = (total_trees as f64).sqrt() as usize;
+    let mut surrounded_trees = 0usize;
 
     for i in 0..trees.len() {
-        let row = i / (grid_size + 1);
-        let col = i % (grid_size + 1);
+        let r = i / (grid_s + 1);
+        let col = i % (grid_s + 1);
 
         // Check if there are taller trees in each direction (up, down, left, right)
-        if (0..col).any(|val| {
+        if (0..col).any(|v| {
             // Check trees to the left
-            val != col && trees[row * grid_size + val] >= trees[row * grid_size + col]
-        }) && (col + 1..grid_size).any(|val| {
+            v != col && trees[r * grid_s + v] >= trees[r * grid_s + col]
+        }) && (col + 1..grid_s).any(|val| {
             // Check trees to the right
-            val != col && trees[row * grid_size + val] >= trees[row * grid_size + col]
-        }) && (0..row).any(|val| {
+            val != col && trees[r * grid_s + val] >= trees[r * grid_s + col]
+        }) && (0..r).any(|v| {
             // Check trees above
-            val != row && trees[val * grid_size + col] >= trees[row * grid_size + col]
-        }) && (row + 1..grid_size).any(|val| {
+            v != r && trees[v * grid_s + col] >= trees[r * grid_s + col]
+        }) && (r + 1..grid_s).any(|v| {
             // Check trees below
-            val != row && trees[val * grid_size + col] >= trees[row * grid_size + col]
+            v != r && trees[v * grid_s + col] >= trees[r * grid_s + col]
         }) {
-            sum += 1; // If the current tree is surrounded, increment the counter
+            surrounded_trees += 1; // If the current tree is surrounded, increment the counter
         }
     }
 
-    format!("{:?}", tree_count - sum) // Print the number of non-surrounded trees
+    format!("{:?}", total_trees - surrounded_trees) // Print the number of non-surrounded trees
 }
 
 pub fn p2() -> String {
@@ -54,12 +54,12 @@ pub fn p2() -> String {
         .collect::<Vec<_>>();
     let tree_count = trees.len();
     let grid_size = (tree_count as f64).sqrt() as usize;
-    let mut scenic = 0usize;
+    let mut scenic_score = 0usize;
 
     for i in 0..trees.len() {
         let row = i / grid_size;
         let col = i % grid_size;
-        let mut cur_scenic = 1usize;
+        let mut cur_scenic_score = 1usize;
 
         if let Some(val) = trees[row * grid_size..row * grid_size + col]
             .iter()
@@ -67,9 +67,9 @@ pub fn p2() -> String {
             .enumerate()
             .find(|(_, val)| val >= &&trees[row * grid_size + col])
         {
-            cur_scenic *= val.0 + 1
+            cur_scenic_score *= val.0 + 1
         } else {
-            cur_scenic *= col
+            cur_scenic_score *= col
         }
 
         if let Some(val) = trees[row * grid_size + col + 1..row * grid_size + grid_size]
@@ -77,9 +77,9 @@ pub fn p2() -> String {
             .enumerate()
             .find(|(_, val)| val >= &&trees[row * grid_size + col])
         {
-            cur_scenic *= val.0 + 1
+            cur_scenic_score *= val.0 + 1
         } else {
-            cur_scenic *= grid_size - (col + 1)
+            cur_scenic_score *= grid_size - (col + 1)
         }
 
         if let Some(val) = (0..row)
@@ -87,22 +87,22 @@ pub fn p2() -> String {
             .enumerate()
             .find(|(_, val)| trees[val * grid_size + col] >= trees[row * grid_size + col])
         {
-            cur_scenic *= val.0 + 1
+            cur_scenic_score *= val.0 + 1
         } else {
-            cur_scenic *= row
+            cur_scenic_score *= row
         }
 
         if let Some(val) = (row + 1..grid_size)
             .enumerate()
             .find(|(_, val)| trees[val * grid_size + col] >= trees[row * grid_size + col])
         {
-            cur_scenic *= val.0 + 1
+            cur_scenic_score *= val.0 + 1
         } else {
-            cur_scenic *= grid_size - (row + 1)
+            cur_scenic_score *= grid_size - (row + 1)
         }
 
-        scenic = std::cmp::max(scenic, cur_scenic);
+        scenic_score = std::cmp::max(scenic_score, cur_scenic_score);
     }
 
-    format!("{:?}", scenic)
+    format!("{:?}", scenic_score)
 }
