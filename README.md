@@ -19,7 +19,7 @@
 
 My first year participating in the Advent of Code. 
 
-My goal this year is keeping the total runtime of all problems below 1s.
+My goal this year is keeping the total runtime of all problems below 10ms.
 
 __Benchmark:__ 
 
