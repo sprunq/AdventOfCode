@@ -1,9 +1,9 @@
 use crate::AocDay;
 
 #[derive(Default)]
-pub struct Day1 {}
+pub struct Parts {}
 
-impl AocDay for Day1 {
+impl AocDay for Parts {
     fn part_1(&self) -> String {
         p1()
     }

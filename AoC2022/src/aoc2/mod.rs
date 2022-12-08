@@ -2,9 +2,9 @@ use crate::AocDay;
 use std::{fs, str::FromStr};
 
 #[derive(Default)]
-pub struct Day2 {}
+pub struct Parts {}
 
-impl AocDay for Day2 {
+impl AocDay for Parts {
     fn part_1(&self) -> String {
         p1_fast()
     }

@@ -1,9 +1,3 @@
-use aoc1::Day1;
-use aoc2::Day2;
-use aoc3::Day3;
-use aoc4::Day4;
-use aoc5::Day5;
-use aoc6::Day6;
 use clap::{command, value_parser, Arg, ArgAction};
 use std::{
     ops::RangeInclusive,
@@ -17,7 +11,7 @@ pub mod aoc4;
 pub mod aoc5;
 pub mod aoc6;
 pub mod aoc7;
-use crate::aoc7::Day7;
+pub mod aoc8;
 use comfy_table::{
     modifiers::{UTF8_ROUND_CORNERS, UTF8_SOLID_INNER_BORDERS},
     presets::UTF8_FULL,
@@ -62,13 +56,14 @@ pub trait AocDay {
 
 fn get_day(day: usize) -> Box<dyn AocDay> {
     match day {
-        1 => Box::new(Day1::default()),
-        2 => Box::new(Day2::default()),
-        3 => Box::new(Day3::default()),
-        4 => Box::new(Day4::default()),
-        5 => Box::new(Day5::default()),
-        6 => Box::new(Day6::default()),
-        7 => Box::new(Day7::default()),
+        1 => Box::new(aoc1::Parts::default()),
+        2 => Box::new(aoc2::Parts::default()),
+        3 => Box::new(aoc3::Parts::default()),
+        4 => Box::new(aoc4::Parts::default()),
+        5 => Box::new(aoc5::Parts::default()),
+        6 => Box::new(aoc6::Parts::default()),
+        7 => Box::new(aoc7::Parts::default()),
+        8 => Box::new(aoc8::Parts::default()),
         _ => panic!("Invalid day"),
     }
 }
