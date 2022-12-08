@@ -14,86 +14,95 @@ impl AocDay for Parts {
 }
 
 pub fn p1() -> String {
-    let mut input = include_str!("input.txt").lines().peekable();
-    let mut stack = Vec::<usize>::new();
-    let mut sum = 0;
-    input.next().unwrap();
-    stack.push(0);
-    while let Some(l) = input.next().or({
-        if stack.len() > 1 {
-            Some("$ cd ..")
-        } else {
-            None
-        }
-    }) {
-        if l.starts_with("$ cd") {
-            let (_, dir) = l.split_at(5);
-            if dir == ".." {
-                let dir_size = stack.pop().unwrap();
-                if dir_size <= 100000 {
-                    sum += dir_size;
-                }
-                *stack.last_mut().unwrap() += dir_size;
-            } else {
-                stack.push(0);
-            }
-        } else if l.starts_with("$ ls") {
-            while !input.peek().unwrap_or(&"$").starts_with('$') {
-                let next = input.next().unwrap();
-                if !next.starts_with("dir") {
-                    let file_size = next.split(' ').next().unwrap();
-                    let s = file_size.parse::<usize>().unwrap();
-                    *stack.last_mut().unwrap() += s;
-                }
-            }
-        } else {
-            panic!()
+    let trees = include_bytes!("input.txt")
+        .iter()
+        .filter(|x| **x != b'\n')
+        .collect::<Vec<_>>();
+    let tree_count = trees.len();
+    let grid_size = (tree_count as f64).sqrt() as usize;
+    let mut sum = 0usize;
+
+    for i in 0..trees.len() {
+        let row = i / (grid_size + 1);
+        let col = i % (grid_size + 1);
+
+        // Check if there are taller trees in each direction (up, down, left, right)
+        if (0..col).any(|val| {
+            // Check trees to the left
+            val != col && trees[row * grid_size + val] >= trees[row * grid_size + col]
+        }) && (col + 1..grid_size).any(|val| {
+            // Check trees to the right
+            val != col && trees[row * grid_size + val] >= trees[row * grid_size + col]
+        }) && (0..row).any(|val| {
+            // Check trees above
+            val != row && trees[val * grid_size + col] >= trees[row * grid_size + col]
+        }) && (row + 1..grid_size).any(|val| {
+            // Check trees below
+            val != row && trees[val * grid_size + col] >= trees[row * grid_size + col]
+        }) {
+            sum += 1; // If the current tree is surrounded, increment the counter
         }
     }
-    format!("{:?}", sum)
+
+    format!("{:?}", tree_count - sum) // Print the number of non-surrounded trees
 }
 
 pub fn p2() -> String {
-    let mut input = include_str!("input.txt").lines().peekable();
-    let mut stack = Vec::new();
-    let mut sizes = Vec::new();
-    input.next().unwrap();
-    stack.push(0);
-    while let Some(l) = input.next().or({
-        if stack.len() > 1 {
-            Some("$ cd ..")
-        } else {
-            None
-        }
-    }) {
-        if l.starts_with("$ cd") {
-            let (_, dir) = l.split_at(5);
-            if dir == ".." {
-                let dir_size = stack.pop().unwrap();
-                sizes.push(dir_size);
-                *stack.last_mut().unwrap() += dir_size;
-            } else {
-                stack.push(0);
-            }
-        } else if l.starts_with("$ ls") {
-            while !input.peek().unwrap_or(&"$").starts_with('$') {
-                let next = input.next().unwrap();
-                if !next.starts_with("dir") {
-                    let file_size = next.split(' ').next().unwrap();
-                    let s = file_size.parse::<usize>().unwrap();
-                    *stack.last_mut().unwrap() += s;
-                }
-            }
-        } else {
-            panic!()
-        }
-    }
-    format!(
-        "{}",
-        sizes
+    let trees = include_bytes!("input.txt")
+        .iter()
+        .filter(|x| **x != b'\n')
+        .collect::<Vec<_>>();
+    let tree_count = trees.len();
+    let grid_size = (tree_count as f64).sqrt() as usize;
+    let mut scenic = 0usize;
+
+    for i in 0..trees.len() {
+        let row = i / grid_size;
+        let col = i % grid_size;
+        let mut cur_scenic = 1usize;
+
+        if let Some(val) = trees[row * grid_size..row * grid_size + col]
             .iter()
-            .filter(|&dir| dir >= &(30000000 - (70000000 - stack[0])))
-            .min()
-            .unwrap()
-    )
+            .rev()
+            .enumerate()
+            .find(|(_, val)| val >= &&trees[row * grid_size + col])
+        {
+            cur_scenic *= val.0 + 1
+        } else {
+            cur_scenic *= col
+        }
+
+        if let Some(val) = trees[row * grid_size + col + 1..row * grid_size + grid_size]
+            .iter()
+            .enumerate()
+            .find(|(_, val)| val >= &&trees[row * grid_size + col])
+        {
+            cur_scenic *= val.0 + 1
+        } else {
+            cur_scenic *= grid_size - (col + 1)
+        }
+
+        if let Some(val) = (0..row)
+            .rev()
+            .enumerate()
+            .find(|(_, val)| trees[val * grid_size + col] >= trees[row * grid_size + col])
+        {
+            cur_scenic *= val.0 + 1
+        } else {
+            cur_scenic *= row
+        }
+
+        if let Some(val) = (row + 1..grid_size)
+            .enumerate()
+            .find(|(_, val)| trees[val * grid_size + col] >= trees[row * grid_size + col])
+        {
+            cur_scenic *= val.0 + 1
+        } else {
+            cur_scenic *= grid_size - (row + 1)
+        }
+
+        scenic = std::cmp::max(scenic, cur_scenic);
+    }
+
+    format!("{:?}", scenic)
 }
