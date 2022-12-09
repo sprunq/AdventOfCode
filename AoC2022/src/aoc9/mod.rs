@@ -1,5 +1,5 @@
 use crate::AocDay;
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 #[derive(Default)]
 pub struct Parts {}
@@ -23,7 +23,7 @@ fn solve_rope(len: usize) -> String {
         })
         .collect::<Vec<(u8, u8)>>();
 
-    let mut visited = HashSet::new();
+    let mut visited = FxHashSet::default();
     let mut rope = vec![(0, 0); len];
     visited.insert((0, 0));
 
