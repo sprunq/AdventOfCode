@@ -1,6 +1,6 @@
 use clap::{command, value_parser, Arg, ArgAction};
 use std::{
-    ops::RangeInclusive,
+    ops::Range,
     time::{Duration, Instant},
     vec,
 };
@@ -12,6 +12,7 @@ pub mod aoc5;
 pub mod aoc6;
 pub mod aoc7;
 pub mod aoc8;
+pub mod aoc9;
 use comfy_table::{
     modifiers::{UTF8_ROUND_CORNERS, UTF8_SOLID_INNER_BORDERS},
     presets::UTF8_FULL,
@@ -43,7 +44,7 @@ fn main() {
         .get_matches();
 
     if matches.get_flag("benchmark") {
-        run_benchmark_all(1..=8, 1000);
+        run_benchmark_all(1..27, 1000);
     } else {
         run_one_part(matches);
     }
@@ -54,17 +55,18 @@ pub trait AocDay {
     fn part_2(&self) -> String;
 }
 
-fn get_day(day: usize) -> Box<dyn AocDay> {
+fn get_day(day: usize) -> Option<Box<dyn AocDay>> {
     match day {
-        1 => Box::new(aoc1::Parts::default()),
-        2 => Box::new(aoc2::Parts::default()),
-        3 => Box::new(aoc3::Parts::default()),
-        4 => Box::new(aoc4::Parts::default()),
-        5 => Box::new(aoc5::Parts::default()),
-        6 => Box::new(aoc6::Parts::default()),
-        7 => Box::new(aoc7::Parts::default()),
-        8 => Box::new(aoc8::Parts::default()),
-        _ => panic!("Invalid day"),
+        1 => Some(Box::new(aoc1::Parts::default())),
+        2 => Some(Box::new(aoc2::Parts::default())),
+        3 => Some(Box::new(aoc3::Parts::default())),
+        4 => Some(Box::new(aoc4::Parts::default())),
+        5 => Some(Box::new(aoc5::Parts::default())),
+        6 => Some(Box::new(aoc6::Parts::default())),
+        7 => Some(Box::new(aoc7::Parts::default())),
+        8 => Some(Box::new(aoc8::Parts::default())),
+        9 => Some(Box::new(aoc9::Parts::default())),
+        _ => None,
     }
 }
 
@@ -81,13 +83,13 @@ fn run_one_part(matches: clap::ArgMatches) {
     let day_ex = get_day(day);
     let part: usize = *matches.get_one("part").expect("part is required");
     let now = Instant::now();
-    let result = run_part(part, day_ex);
+    let result = run_part(part, day_ex.unwrap_or_else(|| panic!("Invalid Day")));
     let elapsed = now.elapsed();
     println!("Result:\t{}", result);
     println!("Time:  \t{:?}", elapsed)
 }
 
-fn run_benchmark_all(days: RangeInclusive<usize>, runs_per_part: u32) {
+fn run_benchmark_all(days: Range<usize>, runs_per_part: u32) {
     let mut table = Table::new();
     table
         .load_preset(UTF8_FULL)
@@ -99,24 +101,26 @@ fn run_benchmark_all(days: RangeInclusive<usize>, runs_per_part: u32) {
     let mut time_data = Vec::new();
     let all_days = days.map(get_day).collect::<Vec<_>>();
     for (day, part) in all_days.iter().enumerate() {
-        let now1 = Instant::now();
-        for _ in 0..runs_per_part {
-            part.part_1();
+        if let Some(part) = part {
+            let now1 = Instant::now();
+            for _ in 0..runs_per_part {
+                part.part_1();
+            }
+            let p1_elapsed = now1.elapsed() / runs_per_part;
+            let now2 = Instant::now();
+            for _ in 0..runs_per_part {
+                part.part_2();
+            }
+            let p2_elapsed = now2.elapsed() / runs_per_part;
+            total_duration_p1 += p1_elapsed;
+            total_duration_p2 += p2_elapsed;
+            time_data.push((
+                format!("{}", day + 1),
+                format!("{:?}", p1_elapsed),
+                format!("{:?}", p2_elapsed),
+                p1_elapsed + p2_elapsed,
+            ))
         }
-        let p1_elapsed = now1.elapsed() / runs_per_part;
-        let now2 = Instant::now();
-        for _ in 0..runs_per_part {
-            part.part_2();
-        }
-        let p2_elapsed = now2.elapsed() / runs_per_part;
-        total_duration_p1 += p1_elapsed;
-        total_duration_p2 += p2_elapsed;
-        time_data.push((
-            format!("{}", day + 1),
-            format!("{:?}", p1_elapsed),
-            format!("{:?}", p2_elapsed),
-            p1_elapsed + p2_elapsed,
-        ))
     }
 
     let combined_duration = total_duration_p1 + total_duration_p2;
