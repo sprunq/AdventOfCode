@@ -46,7 +46,7 @@ fn main() {
         .get_matches();
 
     if matches.get_flag("benchmark") {
-        run_benchmark_all(11..27, 1000);
+        run_benchmark_all(0..27, 1000);
     } else {
         run_one_part(matches);
     }
@@ -119,7 +119,7 @@ fn run_benchmark_all(days: Range<usize>, runs_per_part: u32) {
             total_duration_p1 += p1_elapsed;
             total_duration_p2 += p2_elapsed;
             time_data.push((
-                format!("{}", day + 1),
+                format!("{}", day),
                 format!("{:?}", p1_elapsed),
                 format!("{:?}", p2_elapsed),
                 p1_elapsed + p2_elapsed,
