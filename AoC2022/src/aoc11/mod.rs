@@ -1,5 +1,6 @@
 use crate::AocDay;
-use std::str::FromStr;
+use std::{collections::BinaryHeap, str::FromStr};
+use strength_reduce::StrengthReducedU64;
 
 #[derive(Default)]
 pub struct Parts {}
@@ -20,21 +21,17 @@ pub fn p1() -> String {
         .map(|monkey| Monkey::from_str(monkey).unwrap())
         .collect::<Vec<_>>();
 
+    let div = StrengthReducedU64::new(3);
     for _round in 0..20 {
         for id in 0..monkeys.len() {
             while let Some(item_worry_level) = monkeys[id].inspect_item() {
-                let (div_worry_level, target_id) = monkeys[id].test_with_div(item_worry_level);
+                let (div_worry_level, target_id) = monkeys[id].test_with_div(item_worry_level, div);
                 monkeys[target_id].items.push(div_worry_level);
             }
         }
     }
-    let mut sums = monkeys
-        .iter()
-        .map(|m| m.inspected_items)
-        .collect::<Vec<_>>();
-    sums.sort();
-    let t = sums.iter().rev().take(2).collect::<Vec<_>>();
-    format!("{:?}", { t[0] * t[1] })
+    let mut heap = BinaryHeap::from_iter(monkeys.iter().map(|m| m.inspected_items));
+    format!("{:?}", { heap.pop().unwrap() * heap.pop().unwrap() })
 }
 
 pub fn p2() -> String {
@@ -43,24 +40,21 @@ pub fn p2() -> String {
         .map(|monkey| Monkey::from_str(monkey).unwrap())
         .collect::<Vec<_>>();
 
-    let div_prod: usize = monkeys.iter().map(|monkey| monkey.test).product();
+    let div_prod: u64 = monkeys.iter().map(|monkey| monkey.test).product();
+    let mod_fa = StrengthReducedU64::new(div_prod);
 
     for _round in 0..10_000 {
         for id in 0..monkeys.len() {
             while let Some(item_worry_level) = monkeys[id].inspect_item() {
                 let (div_worry_level, target_id) =
-                    monkeys[id].test_with_modulo(item_worry_level, div_prod);
+                    monkeys[id].test_with_modulo(item_worry_level, mod_fa);
                 monkeys[target_id].items.push(div_worry_level);
             }
         }
     }
-    let mut sums = monkeys
-        .iter()
-        .map(|m| m.inspected_items)
-        .collect::<Vec<_>>();
-    sums.sort();
-    let t = sums.iter().rev().take(2).collect::<Vec<_>>();
-    format!("{:?}", { t[0] * t[1] })
+
+    let mut heap = BinaryHeap::from_iter(monkeys.iter().map(|m| m.inspected_items));
+    format!("{:?}", { heap.pop().unwrap() * heap.pop().unwrap() })
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -77,23 +71,23 @@ enum OpR {
 
 #[derive(Debug, Clone)]
 struct Monkey {
-    items: Vec<usize>,
+    items: Vec<u64>,
     operand: Op,
     operand_r: OpR,
-    test: usize,
+    test: u64,
     if_true: usize,
     if_false: usize,
-    inspected_items: usize,
+    inspected_items: u64,
 }
 
 impl Monkey {
-    pub fn inspect_item(&mut self) -> Option<usize> {
+    pub fn inspect_item(&mut self) -> Option<u64> {
         if let Some(item) = self.items.pop() {
             self.inspected_items += 1;
             let l = item;
             let r = match self.operand_r {
                 OpR::Old => item,
-                OpR::Constant(con) => con as usize,
+                OpR::Constant(con) => con as u64,
             };
             let new_worry_level = match self.operand {
                 Op::Add => l + r,
@@ -105,8 +99,8 @@ impl Monkey {
         }
     }
 
-    pub fn test_with_div(&mut self, worry_level: usize) -> (usize, usize) {
-        let relieved_worry = worry_level / 3;
+    pub fn test_with_div(&mut self, worry_level: u64, divisor: StrengthReducedU64) -> (u64, usize) {
+        let relieved_worry = worry_level / divisor;
 
         if relieved_worry % self.test == 0 {
             (relieved_worry, self.if_true)
@@ -115,7 +109,11 @@ impl Monkey {
         }
     }
 
-    pub fn test_with_modulo(&mut self, worry_level: usize, modulo: usize) -> (usize, usize) {
+    pub fn test_with_modulo(
+        &mut self,
+        worry_level: u64,
+        modulo: StrengthReducedU64,
+    ) -> (u64, usize) {
         let relieved_worry = worry_level % modulo;
 
         if relieved_worry % self.test == 0 {
@@ -158,7 +156,7 @@ impl FromStr for Monkey {
                 });
             } else if line.starts_with("Test") {
                 let parts = line.split_whitespace().last().unwrap();
-                test = Some(parts.trim().parse::<usize>().unwrap());
+                test = Some(parts.trim().parse::<u64>().unwrap());
             } else if line.starts_with("If true") {
                 let parts: Vec<&str> = line.split(':').collect();
                 if_true = Some(parts[1].split_whitespace().last().unwrap().parse().unwrap());
