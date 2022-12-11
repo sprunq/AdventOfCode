@@ -140,9 +140,9 @@ impl FromStr for Monkey {
         for line in s.lines() {
             let line = line.trim();
             if line.starts_with("Starting items") {
-                let parts: Vec<&str> = line.split(":").collect();
+                let parts: Vec<&str> = line.split(':').collect();
                 starting_items = parts[1]
-                    .split(",")
+                    .split(',')
                     .map(|x| x.trim().parse().unwrap())
                     .collect();
             } else if line.starts_with("Operation") {
@@ -160,27 +160,11 @@ impl FromStr for Monkey {
                 let parts = line.split_whitespace().last().unwrap();
                 test = Some(parts.trim().parse::<usize>().unwrap());
             } else if line.starts_with("If true") {
-                let parts: Vec<&str> = line.split(":").collect();
-                if_true = Some(
-                    parts[1]
-                        .trim()
-                        .split_whitespace()
-                        .last()
-                        .unwrap()
-                        .parse()
-                        .unwrap(),
-                );
+                let parts: Vec<&str> = line.split(':').collect();
+                if_true = Some(parts[1].split_whitespace().last().unwrap().parse().unwrap());
             } else if line.starts_with("If false") {
-                let parts: Vec<&str> = line.split(":").collect();
-                if_false = Some(
-                    parts[1]
-                        .trim()
-                        .split_whitespace()
-                        .last()
-                        .unwrap()
-                        .parse()
-                        .unwrap(),
-                );
+                let parts: Vec<&str> = line.split(':').collect();
+                if_false = Some(parts[1].split_whitespace().last().unwrap().parse().unwrap());
             }
         }
 
