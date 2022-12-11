@@ -4,6 +4,7 @@ use std::{
     time::{Duration, Instant},
     vec,
 };
+
 pub mod aoc1;
 pub mod aoc10;
 pub mod aoc11;
