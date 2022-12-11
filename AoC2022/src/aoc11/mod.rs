@@ -21,11 +21,9 @@ pub fn p1() -> String {
         .collect::<Vec<_>>();
 
     for _round in 0..20 {
-        for monkey_id in 0..monkeys.len() {
-            while let Some(item) = monkeys[monkey_id].inspect_item() {
-                let new_worry_level = item;
-                let (div_worry_level, target_id) =
-                    monkeys[monkey_id].test_with_div(new_worry_level);
+        for id in 0..monkeys.len() {
+            while let Some(item_worry_level) = monkeys[id].inspect_item() {
+                let (div_worry_level, target_id) = monkeys[id].test_with_div(item_worry_level);
                 monkeys[target_id].items.push(div_worry_level);
             }
         }
@@ -49,10 +47,9 @@ pub fn p2() -> String {
 
     for _round in 0..10_000 {
         for id in 0..monkeys.len() {
-            while let Some(item) = monkeys[id].inspect_item() {
-                let new_worry_level = item;
+            while let Some(item_worry_level) = monkeys[id].inspect_item() {
                 let (div_worry_level, target_id) =
-                    monkeys[id].test_with_modulo(new_worry_level, div_prod);
+                    monkeys[id].test_with_modulo(item_worry_level, div_prod);
                 monkeys[target_id].items.push(div_worry_level);
             }
         }
