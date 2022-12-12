@@ -8,6 +8,7 @@ use std::{
 pub mod aoc1;
 pub mod aoc10;
 pub mod aoc11;
+pub mod aoc12;
 pub mod aoc2;
 pub mod aoc3;
 pub mod aoc4;
@@ -71,6 +72,7 @@ fn get_day(day: usize) -> Option<Box<dyn AocDay>> {
         9 => Some(Box::new(aoc9::Parts::default())),
         10 => Some(Box::new(aoc10::Parts::default())),
         11 => Some(Box::new(aoc11::Parts::default())),
+        12 => Some(Box::new(aoc12::Parts::default())),
         _ => None,
     }
 }
