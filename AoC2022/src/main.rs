@@ -125,8 +125,8 @@ fn run_benchmark_all(days: Range<usize>, runs_per_part: u32) {
             total_duration_p2 += p2_elapsed;
             time_data.push((
                 format!("{}", day),
-                format!("{:?}", p1_elapsed),
-                format!("{:?}", p2_elapsed),
+                format!("{:.1}µs", p1_elapsed.as_secs_f64() * 1000000.0),
+                format!("{:.1}µs", p2_elapsed.as_secs_f64() * 1000000.0),
                 p1_elapsed + p2_elapsed,
             ))
         }
@@ -139,7 +139,7 @@ fn run_benchmark_all(days: Range<usize>, runs_per_part: u32) {
             data.0,
             data.1,
             data.2,
-            format!("{:#?}", data.3),
+            format!("{:.3}ms", data.3.as_secs_f64() * 1000.0),
             format!("{:.1}%", percentage),
         ]);
     }

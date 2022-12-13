@@ -35,7 +35,6 @@ pub fn p1() -> String {
             }
         })
         .sum::<usize>();
-
     format!("{:?}", sum)
 }
 
@@ -56,7 +55,7 @@ pub fn p2() -> String {
         .flat_map(|(a, b)| [a, b])
         .chain(divs.clone())
         .sorted()
-        .positions(|n| divs.contains(&n))
+        .positions(|n| n == divs[0] || n == divs[1])
         .map(|pos| pos + 1)
         .product::<usize>();
 
@@ -64,24 +63,20 @@ pub fn p2() -> String {
 }
 
 fn parse_node(chars: &mut Peekable<Chars>) -> Node {
-    let num_str = chars
-        .clone()
-        .take_while(|c| matches!(c, '0'..='9'))
-        .collect::<String>();
-    if !num_str.is_empty() {
-        let number = num_str.parse().unwrap();
-        (0..num_str.len()).for_each(|_| {
-            chars.next();
-        });
-        return Node::Value(number);
-    }
-    chars.next();
     let mut items = Vec::new();
-    while let Some(character) = chars.peek() {
-        match character {
-            '[' | '0'..='9' => {
+    chars.next();
+    while let Some(peek_ch) = chars.peek() {
+        match peek_ch {
+            '[' => {
                 let node = parse_node(chars);
                 items.push(node);
+            }
+            '0'..='9' => {
+                let num_str = chars
+                    .peeking_take_while(|c| matches!(c, '0'..='9'))
+                    .collect::<String>();
+                let number = num_str.parse().unwrap();
+                items.push(Node::Value(number));
             }
             ']' => {
                 chars.next();
