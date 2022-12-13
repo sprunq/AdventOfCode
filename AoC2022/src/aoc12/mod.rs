@@ -21,7 +21,7 @@ pub fn p1() -> String {
         .map(|x| x.to_owned())
         .collect::<Vec<_>>();
     let mut start_pos = (0, 0);
-    'outer: for r in 0..tile_cost.len() {
+    'outer: for (r, _) in tile_cost.iter().enumerate() {
         for c in 0..tile_cost[r].len() {
             if tile_cost[r][c] == b'E' {
                 start_pos = (r, c);
@@ -38,7 +38,7 @@ pub fn p2() -> String {
         .map(|x| x.to_owned())
         .collect::<Vec<_>>();
     let mut start_pos = (0, 0);
-    'outer: for r in 0..tile_cost.len() {
+    'outer: for (r, _) in tile_cost.iter().enumerate() {
         for c in 0..tile_cost[r].len() {
             if tile_cost[r][c] == b'E' {
                 start_pos = (r, c);
@@ -50,7 +50,7 @@ pub fn p2() -> String {
 }
 
 fn bfs(tile_weights: &mut Vec<Vec<u8>>, pos: (usize, usize), target: u8) -> Option<usize> {
-    const DIR: [(isize, isize); 4] = [(0, -1), (0, 1), (1, 0), (-1, 0)];
+    let directions = [(0, -1), (0, 1), (1, 0), (-1, 0)];
     tile_weights[pos.0][pos.1] = 0;
     let mut queue = VecDeque::new();
     queue.push_back((pos, b'z'));
@@ -63,7 +63,7 @@ fn bfs(tile_weights: &mut Vec<Vec<u8>>, pos: (usize, usize), target: u8) -> Opti
                     return Some(steps);
                 };
 
-                for (dr, dc) in DIR.iter() {
+                for (dr, dc) in directions.iter() {
                     let horizontal_x = p.0 as isize + dr;
                     let vertical_x = p.1 as isize + dc;
                     if horizontal_x < 0 || vertical_x < 0 {
