@@ -5,7 +5,6 @@ use std::{
     vec,
 };
 
-pub mod aoc00;
 pub mod aoc1;
 pub mod aoc10;
 pub mod aoc11;
