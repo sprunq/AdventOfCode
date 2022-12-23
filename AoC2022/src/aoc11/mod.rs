@@ -1,11 +1,11 @@
-use crate::AocDay;
+use crate::Solution;
 use std::{collections::BinaryHeap, str::FromStr};
 use strength_reduce::StrengthReducedU64;
 
 #[derive(Default)]
 pub struct Parts {}
 
-impl AocDay for Parts {
+impl Solution for Parts {
     fn part_1(&self) -> String {
         p1()
     }

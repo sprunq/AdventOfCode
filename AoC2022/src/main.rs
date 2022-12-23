@@ -5,6 +5,7 @@ use std::{
     vec,
 };
 
+pub mod aoc00;
 pub mod aoc1;
 pub mod aoc10;
 pub mod aoc11;
@@ -49,18 +50,18 @@ fn main() {
         .get_matches();
 
     if matches.get_flag("benchmark") {
-        run_benchmark_all(0..27, 1000);
+        run_benchmark_all(1..26, 1000);
     } else {
         run_one_part(matches);
     }
 }
 
-pub trait AocDay {
+pub trait Solution {
     fn part_1(&self) -> String;
     fn part_2(&self) -> String;
 }
 
-fn get_day(day: usize) -> Option<Box<dyn AocDay>> {
+fn get_day(day: usize) -> Option<Box<dyn Solution>> {
     match day {
         1 => Some(Box::new(aoc1::Parts::default())),
         2 => Some(Box::new(aoc2::Parts::default())),
@@ -79,7 +80,7 @@ fn get_day(day: usize) -> Option<Box<dyn AocDay>> {
     }
 }
 
-fn run_part(part: usize, day_ex: Box<dyn AocDay>) -> String {
+fn run_part(part: usize, day_ex: Box<dyn Solution>) -> String {
     match part {
         1 => day_ex.part_1(),
         2 => day_ex.part_2(),
@@ -124,10 +125,17 @@ fn run_benchmark_all(days: Range<usize>, runs_per_part: u32) {
             total_duration_p1 += p1_elapsed;
             total_duration_p2 += p2_elapsed;
             time_data.push((
-                format!("{}", day),
+                format!("{}", day + 1),
                 format!("{:.1}µs", p1_elapsed.as_secs_f64() * 1000000.0),
                 format!("{:.1}µs", p2_elapsed.as_secs_f64() * 1000000.0),
                 p1_elapsed + p2_elapsed,
+            ))
+        } else {
+            time_data.push((
+                format!("{}", day + 1),
+                "-".to_string(),
+                "-".to_string(),
+                Duration::new(0, 0),
             ))
         }
     }

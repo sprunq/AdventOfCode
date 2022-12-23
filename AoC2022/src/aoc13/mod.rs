@@ -1,12 +1,12 @@
 use itertools::Itertools;
 
-use crate::AocDay;
+use crate::Solution;
 use std::{cmp::Ordering, fmt, iter::Peekable, str::Chars};
 
 #[derive(Default)]
 pub struct Parts {}
 
-impl AocDay for Parts {
+impl Solution for Parts {
     fn part_1(&self) -> String {
         p1()
     }

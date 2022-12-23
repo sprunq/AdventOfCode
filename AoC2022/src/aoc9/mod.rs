@@ -1,10 +1,10 @@
-use crate::AocDay;
+use crate::Solution;
 use rustc_hash::FxHashSet;
 
 #[derive(Default)]
 pub struct Parts {}
 
-impl AocDay for Parts {
+impl Solution for Parts {
     fn part_1(&self) -> String {
         solve_rope(2)
     }
