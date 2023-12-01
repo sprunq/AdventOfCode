@@ -1,8 +1,5 @@
-use std::fmt::format;
-
-use itertools::Itertools;
-
 use crate::Solution;
+use itertools::Itertools;
 
 #[derive(Default)]
 pub struct Parts {}
@@ -25,17 +22,9 @@ pub fn p1() -> String {
     let sum: u32 = res
         .into_iter()
         .map(|line| {
-            let first = line
-                .iter()
-                .find(|c| c.is_ascii_digit())
-                .map(|c| *c - b'0')
-                .unwrap();
-            let last = line
-                .iter()
-                .rfind(|c| c.is_ascii_digit())
-                .map(|c| *c - b'0')
-                .unwrap();
-            first as u32 * 10 + last as u32
+            let first = line.iter().find(|c| c.is_ascii_digit()).unwrap();
+            let last = line.iter().rfind(|c| c.is_ascii_digit()).unwrap();
+            (first - b'0') as u32 * 10 + (last - b'0') as u32
         })
         .sum();
 
@@ -43,44 +32,34 @@ pub fn p1() -> String {
 }
 
 pub fn p2() -> String {
-    let res = include_str!("input.txt").lines();
+    let lines = include_str!("input.txt").lines();
 
     let mut sum = 0;
-    for mut line in res {
-        let mut first = None;
-        let mut last = None;
-        loop {
+    for mut line in lines {
+        let first = 'out: loop {
             for (word, num) in NUMBER_MAP.iter() {
-                if first.is_none() && line.starts_with(word) {
-                    first = Some(num);
-                }
-
-                if last.is_none() && line.ends_with(word) {
-                    last = Some(num);
+                if line.starts_with(word) {
+                    break 'out *num as u32;
                 }
             }
-            match (first, last) {
-                (Some(_), Some(_)) => break,
-                (Some(_), None) => {
-                    line = &line[..line.len() - 1];
-                }
-                (None, Some(_)) => {
-                    line = &line[1..];
-                }
-                (None, None) => {
-                    line = &line[1..];
-                    line = &line[..line.len() - 1];
+            line = &line[1..];
+        };
+
+        let last = 'out: loop {
+            for (word, num) in NUMBER_MAP.iter() {
+                if line.ends_with(word) {
+                    break 'out *num as u32;
                 }
             }
-        }
-
-        sum += first.unwrap() * 10 + last.unwrap();
+            line = &line[..line.len() - 1];
+        };
+        sum += first * 10 + last;
     }
 
     format!("{}", sum)
 }
 
-const NUMBER_MAP: [(&str, u32); 20] = [
+const NUMBER_MAP: [(&str, u8); 20] = [
     ("0", 0),
     ("1", 1),
     ("2", 2),
