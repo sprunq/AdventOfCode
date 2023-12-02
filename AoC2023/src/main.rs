@@ -110,6 +110,7 @@ fn run_benchmark_all(days: Range<usize>, runs_per_part: u32) {
     let mut total_duration_p1 = Duration::new(0, 0);
     let mut total_duration_p2 = Duration::new(0, 0);
     let mut time_data = Vec::new();
+
     let all_days = days.map(get_day).collect::<Vec<_>>();
     for (day, part) in all_days.iter().enumerate() {
         if let Some(part) = part {
@@ -130,13 +131,6 @@ fn run_benchmark_all(days: Range<usize>, runs_per_part: u32) {
                 format!("{:.1}µs", p1_elapsed.as_secs_f64() * 1000000.0),
                 format!("{:.1}µs", p2_elapsed.as_secs_f64() * 1000000.0),
                 p1_elapsed + p2_elapsed,
-            ))
-        } else {
-            time_data.push((
-                format!("{}", day + 1),
-                "-".to_string(),
-                "-".to_string(),
-                Duration::new(0, 0),
             ))
         }
     }
