@@ -1,20 +1,8 @@
-use crate::Solution;
+crate::AocDay!(1);
+
 use itertools::Itertools;
 
-#[derive(Default)]
-pub struct Parts {}
-
-impl Solution for Parts {
-    fn part_1(&self) -> String {
-        p1()
-    }
-
-    fn part_2(&self) -> String {
-        p2()
-    }
-}
-
-pub fn p1() -> String {
+pub fn part_1() -> String {
     let res = include_bytes!("input.txt")
         .split(|&c| c == b'\n')
         .collect_vec();
@@ -31,7 +19,7 @@ pub fn p1() -> String {
     format!("{}", sum)
 }
 
-pub fn p2() -> String {
+pub fn part_2() -> String {
     let lines = include_str!("input.txt").lines();
 
     let mut sum = 0;

@@ -48,9 +48,32 @@ pub trait Solution {
     fn part_2(&self) -> String;
 }
 
+#[macro_export]
+macro_rules! AocDay {
+    ($day:expr) => {
+        use crate::Solution;
+        use paste::paste;
+
+        paste! {
+                #[derive(Default)]
+                pub struct [<AocDay $day>];
+
+                impl Solution for [<AocDay $day>] {
+                    fn part_1(&self) -> String {
+                        part_1()
+                    }
+
+                    fn part_2(&self) -> String {
+                        part_2()
+                    }
+            }
+        }
+    };
+}
+
 fn get_day(day: usize) -> Option<Box<dyn Solution>> {
     match day {
-        1 => Some(Box::new(aoc1::Parts::default())),
+        1 => Some(Box::new(aoc1::AocDay1::default())),
         _ => None,
     }
 }
