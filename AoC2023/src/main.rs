@@ -1,15 +1,16 @@
-use clap::{command, value_parser, Arg, ArgAction};
-use std::{
-    ops::Range,
-    time::{Duration, Instant},
-    vec,
-};
+pub mod days;
 
-pub mod aoc1;
+use crate::days::*;
+use clap::{command, value_parser, Arg, ArgAction};
 use comfy_table::{
     modifiers::{UTF8_ROUND_CORNERS, UTF8_SOLID_INNER_BORDERS},
     presets::UTF8_FULL,
     Table,
+};
+use std::{
+    ops::Range,
+    time::{Duration, Instant},
+    vec,
 };
 
 fn main() {
@@ -73,7 +74,9 @@ macro_rules! AocDay {
 
 fn get_day(day: usize) -> Option<Box<dyn Solution>> {
     match day {
-        1 => Some(Box::new(aoc1::AocDay1::default())),
+        1 => Some(Box::new(aoc01::AocDay1::default())),
+        2 => Some(Box::new(aoc02::AocDay2::default())),
+
         _ => None,
     }
 }
