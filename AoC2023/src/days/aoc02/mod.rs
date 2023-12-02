@@ -4,9 +4,9 @@ const INPUT: &str = include_str!("input.txt");
 
 pub fn part_1() -> String {
     let parsed = parse_input(INPUT);
-    const LIMIT_RED: usize = 12;
-    const LIMIT_GREEN: usize = 13;
-    const LIMIT_BLUE: usize = 14;
+    const LIMIT_RED: u16 = 12;
+    const LIMIT_GREEN: u16 = 13;
+    const LIMIT_BLUE: u16 = 14;
 
     let possibe_games: usize = parsed
         .iter()
@@ -14,9 +14,7 @@ pub fn part_1() -> String {
         .filter_map(|(id, game)| {
             let possible_games = game
                 .iter()
-                .filter(|draw| {
-                    draw.red <= LIMIT_RED && draw.green <= LIMIT_GREEN && draw.blue <= LIMIT_BLUE
-                })
+                .filter(|draw| draw.0 <= LIMIT_RED && draw.1 <= LIMIT_GREEN && draw.2 <= LIMIT_BLUE)
                 .count();
 
             if possible_games == game.len() {
@@ -33,12 +31,12 @@ pub fn part_1() -> String {
 pub fn part_2() -> String {
     let parsed = parse_input(INPUT);
 
-    let possibe_games: usize = parsed
+    let possibe_games: u16 = parsed
         .iter()
         .map(|game| {
-            let max_red = game.iter().map(|draw| draw.red).max().unwrap();
-            let max_green = game.iter().map(|draw| draw.green).max().unwrap();
-            let max_blue = game.iter().map(|draw| draw.blue).max().unwrap();
+            let max_red = game.iter().map(|draw| draw.0).max().unwrap();
+            let max_green = game.iter().map(|draw| draw.1).max().unwrap();
+            let max_blue = game.iter().map(|draw| draw.2).max().unwrap();
 
             max_red * max_green * max_blue
         })
@@ -47,9 +45,11 @@ pub fn part_2() -> String {
     format!("{}", possibe_games)
 }
 
-fn parse_input(input: &str) -> Vec<Vec<GameDraw>> {
+fn parse_input(input: &str) -> Vec<Vec<(u16, u16, u16)>> {
+    let lines = input.lines();
     let mut games = Vec::new();
-    for line in input.lines() {
+
+    for line in lines {
         let (_, game) = line.split_once(":").unwrap();
         let drawings = game.split(";");
         let mut game_draws = Vec::new();
@@ -61,46 +61,25 @@ fn parse_input(input: &str) -> Vec<Vec<GameDraw>> {
     games
 }
 
-fn parse_drawing(input: &str) -> GameDraw {
+fn parse_drawing(input: &str) -> (u16, u16, u16) {
     let split = input.split(",");
-    let mut draw = GameDraw::empty();
+    let mut draw = (0, 0, 0);
     for s in split {
         let (digit, color) = s.trim().split_once(" ").unwrap();
-        let number = digit.trim().parse::<usize>().unwrap();
+        let number = digit.trim().parse::<u16>().unwrap();
 
         match color.trim() {
             "red" => {
-                draw.red = number;
+                draw.0 = number;
             }
             "blue" => {
-                draw.blue = number;
+                draw.1 = number;
             }
             "green" => {
-                draw.green = number;
+                draw.2 = number;
             }
             _ => panic!("Invalid color"),
         }
     }
     draw
-}
-
-#[derive(Debug, Clone)]
-struct GameDraw {
-    red: usize,
-    green: usize,
-    blue: usize,
-}
-
-impl GameDraw {
-    fn new(red: usize, green: usize, blue: usize) -> Self {
-        Self { red, green, blue }
-    }
-
-    fn empty() -> Self {
-        Self {
-            red: 0,
-            green: 0,
-            blue: 0,
-        }
-    }
 }
