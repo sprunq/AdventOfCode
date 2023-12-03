@@ -2,53 +2,12 @@ crate::AocDay!(3);
 
 const INPUT: &[u8] = include_bytes!("input.txt");
 
+#[inline(always)]
 pub fn part_1() -> String {
-    let mat = INPUT
-        .split(|&b| b == b'\n')
-        .map(|line| line.to_vec())
-        .collect::<Vec<_>>();
-
-    let dim_y = mat.len();
-    let dim_x = mat[0].len();
-
-    let mut sum = 0;
-
-    for y in 0..dim_y {
-        for x in 0..dim_x {
-            let ch = mat[y][x];
-            if !ch.is_ascii_digit() && ch != b'.' {
-                let mut local_mat = [[0; 3]; 3];
-                for position in POSITIONS {
-                    let (dx, dy) = position;
-                    let matrix_x = (dx + 1) as usize;
-                    let matrix_y = (dy + 1) as usize;
-                    let abs_x = (x as i32 + dx) as usize;
-                    let abs_y = (y as i32 + dy) as usize;
-                    local_mat[matrix_y][matrix_x] = read_num(&mat, abs_x, abs_y);
-                }
-
-                for line in local_mat {
-                    let [x, y, z] = line;
-
-                    if x != 0 {
-                        sum += x;
-                    }
-
-                    if y != z && z != 0 {
-                        sum += z;
-                    }
-
-                    if x != y && y != 0 {
-                        sum += y;
-                    }
-                }
-            }
-        }
-    }
-
-    format!("{}", sum)
+    part_2()
 }
 
+#[inline(always)]
 pub fn part_2() -> String {
     let mat = INPUT
         .split(|&b| b == b'\n')
@@ -58,7 +17,8 @@ pub fn part_2() -> String {
     let dim_y = mat.len();
     let dim_x = mat[0].len();
 
-    let mut sum = 0;
+    let mut sum_p1 = 0;
+    let mut sum_p2 = 0;
 
     for y in 0..dim_y {
         for x in 0..dim_x {
@@ -82,29 +42,33 @@ pub fn part_2() -> String {
                     if x != 0 {
                         n += 1;
                         p *= x;
+                        sum_p1 += x;
                     }
 
                     if y != z && z != 0 {
                         n += 1;
                         p *= z;
+                        sum_p1 += z;
                     }
 
                     if x != y && y != 0 {
                         n += 1;
                         p *= y;
+                        sum_p1 += y;
                     }
                 }
 
                 if n == 2 {
-                    sum += p;
+                    sum_p2 += p;
                 }
             }
         }
     }
 
-    format!("{}", sum)
+    format!("p1: {}, p2: {}", sum_p1, sum_p2)
 }
 
+#[inline(always)]
 fn read_num(mat: &[Vec<u8>], x: usize, y: usize) -> u32 {
     let mut number_start = x;
     let mut number_end = x;
