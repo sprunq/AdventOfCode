@@ -52,8 +52,8 @@ pub trait Solution {
 #[macro_export]
 macro_rules! AocDay {
     ($day:expr) => {
-        use crate::Solution;
         use paste::paste;
+        use $crate::Solution;
 
         paste! {
                 #[derive(Default)]
@@ -74,9 +74,9 @@ macro_rules! AocDay {
 
 fn get_day(day: usize) -> Option<Box<dyn Solution>> {
     match day {
-        1 => Some(Box::new(aoc01::AocDay1::default())),
-        2 => Some(Box::new(aoc02::AocDay2::default())),
-        3 => Some(Box::new(aoc03::AocDay3::default())),
+        1 => Some(Box::new(aoc01::AocDay1)),
+        2 => Some(Box::new(aoc02::AocDay2)),
+        3 => Some(Box::new(aoc03::AocDay3)),
         _ => None,
     }
 }

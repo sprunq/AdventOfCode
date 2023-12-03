@@ -27,8 +27,8 @@ pub fn part_1() -> String {
                     local_mat[matrix_y][matrix_x] = read_num(&mat, abs_x, abs_y);
                 }
 
-                for i in 0..3 {
-                    let [x, y, z] = local_mat[i];
+                for line in local_mat {
+                    let [x, y, z] = line;
 
                     if x != 0 {
                         sum += x;
@@ -76,8 +76,8 @@ pub fn part_2() -> String {
 
                 let mut n = 0;
                 let mut p = 1;
-                for i in 0..3 {
-                    let [x, y, z] = local_mat[i];
+                for line in local_mat {
+                    let [x, y, z] = line;
 
                     if x != 0 {
                         n += 1;
@@ -105,23 +105,23 @@ pub fn part_2() -> String {
     format!("{}", sum)
 }
 
-fn read_num(mat: &Vec<Vec<u8>>, x: usize, y: usize) -> u32 {
+fn read_num(mat: &[Vec<u8>], x: usize, y: usize) -> u32 {
     let mut number_start = x;
     let mut number_end = x;
 
-    if !matches!(mat[y][x], b'0'..=b'9') {
+    if !mat[y][x].is_ascii_digit() {
         return 0;
     }
 
     while number_start > 0 {
-        if !matches!(mat[y][number_start - 1], b'0'..=b'9') {
+        if !mat[y][number_start - 1].is_ascii_digit() {
             break;
         }
         number_start -= 1;
     }
 
     while number_end < mat[y].len() - 1 {
-        if !matches!(mat[y][number_end + 1], b'0'..=b'9') {
+        if !mat[y][number_end + 1].is_ascii_digit() {
             break;
         }
         number_end += 1;
