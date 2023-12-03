@@ -16,10 +16,7 @@ pub fn part_1() -> String {
     for y in 0..dim_y {
         for x in 0..dim_x {
             let ch = mat[y][x];
-            if matches!(
-                ch,
-                b'*' | b'@' | b'#' | b'-' | b'=' | b'/' | b'+' | b'%' | b'$' | b'&'
-            ) {
+            if !ch.is_ascii_digit() && ch != b'.' {
                 let mut local_mat = [[0; 3]; 3];
                 for position in POSITIONS {
                     let (dx, dy) = position;
@@ -30,7 +27,21 @@ pub fn part_1() -> String {
                     local_mat[matrix_y][matrix_x] = read_num(&mat, abs_x, abs_y);
                 }
 
-                sum += (0..3).map(|i| line_sum(&local_mat[i])).sum::<u32>();
+                for i in 0..3 {
+                    let [x, y, z] = local_mat[i];
+
+                    if x != 0 {
+                        sum += x;
+                    }
+
+                    if y != z && z != 0 {
+                        sum += z;
+                    }
+
+                    if x != y && y != 0 {
+                        sum += y;
+                    }
+                }
             }
         }
     }
@@ -38,24 +49,60 @@ pub fn part_1() -> String {
     format!("{}", sum)
 }
 
-fn line_sum(line: &[u32; 3]) -> u32 {
-    let [x, y, z] = *line;
+pub fn part_2() -> String {
+    let mat = INPUT
+        .split(|&b| b == b'\n')
+        .map(|line| line.to_vec())
+        .collect::<Vec<_>>();
+
+    let dim_y = mat.len();
+    let dim_x = mat[0].len();
 
     let mut sum = 0;
 
-    if x != 0 {
-        sum += x;
+    for y in 0..dim_y {
+        for x in 0..dim_x {
+            let ch = mat[y][x];
+            if !ch.is_ascii_digit() && ch != b'.' {
+                let mut local_mat = [[0; 3]; 3];
+                for position in POSITIONS {
+                    let (dx, dy) = position;
+                    let matrix_x = (dx + 1) as usize;
+                    let matrix_y = (dy + 1) as usize;
+                    let abs_x = (x as i32 + dx) as usize;
+                    let abs_y = (y as i32 + dy) as usize;
+                    local_mat[matrix_y][matrix_x] = read_num(&mat, abs_x, abs_y);
+                }
+
+                let mut n = 0;
+                let mut p = 1;
+                for i in 0..3 {
+                    let [x, y, z] = local_mat[i];
+
+                    if x != 0 {
+                        n += 1;
+                        p *= x;
+                    }
+
+                    if y != z && z != 0 {
+                        n += 1;
+                        p *= z;
+                    }
+
+                    if x != y && y != 0 {
+                        n += 1;
+                        p *= y;
+                    }
+                }
+
+                if n == 2 {
+                    sum += p;
+                }
+            }
+        }
     }
 
-    if y != z && z != 0 {
-        sum += z;
-    }
-
-    if x != y && y != 0 {
-        sum += y;
-    }
-
-    sum
+    format!("{}", sum)
 }
 
 fn read_num(mat: &Vec<Vec<u8>>, x: usize, y: usize) -> u32 {
@@ -87,10 +134,6 @@ fn read_num(mat: &Vec<Vec<u8>>, x: usize, y: usize) -> u32 {
     let s = std::str::from_utf8(parts);
     let p = s.unwrap().parse::<u32>();
     p.unwrap()
-}
-
-pub fn part_2() -> String {
-    todo!()
 }
 
 const POSITIONS: &[(i32, i32)] = &[
