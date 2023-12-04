@@ -4,18 +4,20 @@ const INPUT: &[u8] = include_bytes!("input.txt");
 
 #[inline(always)]
 pub fn part_1() -> String {
-    let mut score = 0;
-    for line in INPUT.split(|b| *b == b'\n') {
-        let winning_num = parse_numbers::<10>(&line[10..39]);
-        let guessed_num = parse_numbers::<25>(&line[42..116]);
+    let score: u32 = INPUT
+        .split(|b| *b == b'\n')
+        .map(|line| {
+            let winning_num = parse_numbers::<10>(&line[10..39]);
+            let guessed_num = parse_numbers::<25>(&line[42..116]);
+            let correct = get_correct_score(winning_num, guessed_num);
 
-        let correct = get_correct_score(winning_num, guessed_num);
-
-        if correct > 0 {
-            let line_score = 2_i32.pow(correct as u32 - 1);
-            score += line_score;
-        }
-    }
+            if correct > 0 {
+                1 << correct - 1
+            } else {
+                0
+            }
+        })
+        .sum();
 
     format!("{}", score)
 }
@@ -24,16 +26,15 @@ pub fn part_1() -> String {
 pub fn part_2() -> String {
     let lines = INPUT.split(|b| *b == b'\n').collect::<Vec<_>>();
     let mut copies = vec![1; lines.len()];
-    for (idx, line) in lines.iter().enumerate() {
+    lines.iter().enumerate().for_each(|(idx, line)| {
         let winning_num = parse_numbers::<10>(&line[10..39]);
         let guessed_num = parse_numbers::<25>(&line[42..116]);
-
         let correct = get_correct_score(winning_num, guessed_num);
 
         for underlying_card_idx in idx + 1..idx + 1 + correct {
             copies[underlying_card_idx] += copies[idx];
         }
-    }
+    });
 
     let sum = copies.iter().sum::<u64>();
     format!("{}", sum)

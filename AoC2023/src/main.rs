@@ -38,7 +38,7 @@ fn main() {
         .get_matches();
 
     if matches.get_flag("benchmark") {
-        run_benchmark_all(1..26, 1000);
+        run_benchmark_all(1..26, 10000);
     } else {
         run_one_part(matches);
     }
