@@ -10,12 +10,7 @@ pub fn part_1() -> String {
             let winning_num = parse_numbers::<10>(&line[10..39]);
             let guessed_num = parse_numbers::<25>(&line[42..116]);
             let correct = get_correct_score(winning_num, guessed_num);
-
-            if correct > 0 {
-                1 << correct - 1
-            } else {
-                0
-            }
+            (2 << correct - 1) >> 1
         })
         .sum();
 
