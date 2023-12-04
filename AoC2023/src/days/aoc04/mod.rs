@@ -1,14 +1,15 @@
 crate::AocDay!(4);
 
-const INPUT: &[u8] = include_bytes!("input.txt");
+const INPUT: &str = include_str!("input.txt");
 
 #[inline(always)]
 pub fn part_1() -> String {
     let score: u32 = INPUT
-        .split(|b| *b == b'\n')
+        .lines()
         .map(|line| {
-            let winning_num = parse_numbers::<10>(&line[10..39]);
-            let guessed_num = parse_numbers::<25>(&line[42..116]);
+            let bytes = line.as_bytes();
+            let winning_num = parse_numbers::<10>(&bytes[10..39]);
+            let guessed_num = parse_numbers::<25>(&bytes[42..116]);
             let correct = get_correct_score(winning_num, guessed_num);
             (2 << correct - 1) >> 1
         })
@@ -19,11 +20,12 @@ pub fn part_1() -> String {
 
 #[inline(always)]
 pub fn part_2() -> String {
-    let lines = INPUT.split(|b| *b == b'\n').collect::<Vec<_>>();
+    let lines = INPUT.lines().collect::<Vec<_>>();
     let mut copies = vec![1; lines.len()];
     lines.iter().enumerate().for_each(|(idx, line)| {
-        let winning_num = parse_numbers::<10>(&line[10..39]);
-        let guessed_num = parse_numbers::<25>(&line[42..116]);
+        let bytes = line.as_bytes();
+        let winning_num = parse_numbers::<10>(&bytes[10..39]);
+        let guessed_num = parse_numbers::<25>(&bytes[42..116]);
         let correct = get_correct_score(winning_num, guessed_num);
 
         for underlying_card_idx in idx + 1..idx + 1 + correct {
