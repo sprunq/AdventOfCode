@@ -1,7 +1,7 @@
-use std::ops::Range;
-
+use cached::proc_macro::cached;
 use itertools::Itertools;
-use rayon::iter::{IndexedParallelIterator, IntoParallelRefMutIterator, ParallelIterator};
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
+use std::ops::Range;
 
 crate::AocDay!(5);
 
@@ -34,26 +34,26 @@ pub fn part_2() -> String {
     let categories = parse_categories(s);
 
     let res_len = seeds.iter().map(|x| x.len()).sum::<usize>();
+    dbg!(res_len);
 
-    let mut outputs = vec![0; res_len];
-    let flat_seeds = seeds
-        .iter()
-        .map(|e| e.clone().collect_vec())
-        .flatten()
-        .collect_vec();
+    let min = seeds
+        .into_iter()
+        .map(|sr| {
+            println!("{:?}", sr);
 
-    dbg!(flat_seeds.len());
-
-    outputs.par_iter_mut().enumerate().for_each(|(idx, e)| {
-        let seed = flat_seeds[idx];
-        let mut output = seed;
-        for category in &categories {
-            output = category.map(output);
-        }
-        *e = output;
-    });
-
-    let min = outputs.iter().min().unwrap();
+            sr.into_par_iter()
+                .map(|s| {
+                    let mut output = s;
+                    for category in &categories {
+                        output = category.map(output);
+                    }
+                    output
+                })
+                .min()
+                .unwrap()
+        })
+        .min()
+        .unwrap();
 
     format!("{}", min)
 }
@@ -96,7 +96,7 @@ fn parse_category(input: &str) -> Category {
         let target = s.next().unwrap().parse::<usize>().unwrap();
         let source = s.next().unwrap().parse::<usize>().unwrap();
         let len = s.next().unwrap().parse::<usize>().unwrap();
-        let map = Map::new(source..source + len, target..target + len);
+        let map = Map::new(source, target, len);
         maps.push(map);
     }
     Category::new(maps)
@@ -104,22 +104,21 @@ fn parse_category(input: &str) -> Category {
 
 #[derive(Debug, Clone)]
 struct Map {
-    source: Range<usize>,
-    destination: Range<usize>,
+    src: usize,
+    dst: usize,
+    len: usize,
 }
 
 impl Map {
-    fn new(source: Range<usize>, destination: Range<usize>) -> Self {
-        Self {
-            source,
-            destination,
-        }
+    fn new(src: usize, dst: usize, len: usize) -> Self {
+        Self { src, dst, len }
     }
 
+    #[inline(always)]
     fn map(&self, input: usize) -> Option<usize> {
-        if self.source.contains(&input) {
-            let offset = input - self.source.start;
-            Some(self.destination.start + offset)
+        if input >= self.src && input < self.src + self.len {
+            let offset = input - self.src;
+            Some(self.dst + offset)
         } else {
             None
         }
@@ -136,6 +135,7 @@ impl Category {
         Self { maps }
     }
 
+    #[inline(always)]
     pub fn map(&self, input: usize) -> usize {
         for map in &self.maps {
             if let Some(output) = map.map(input) {

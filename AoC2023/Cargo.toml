@@ -16,6 +16,7 @@ quote = "1.0"
 strength_reduce = "0.2.4"
 paste = "1.0.14"
 find_all = "2.0.0"
+cached = "0.46.1"
 
 
 [profile.release]
