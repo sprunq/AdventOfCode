@@ -11,7 +11,7 @@ pub fn part_1() -> String {
             let winning_num = parse_numbers::<10>(&bytes[10..39]);
             let guessed_num = parse_numbers::<25>(&bytes[42..116]);
             let correct = get_correct_score(winning_num, guessed_num);
-            (2 << correct - 1) >> 1
+            (2 << (correct - 1)) >> 1
         })
         .sum();
 

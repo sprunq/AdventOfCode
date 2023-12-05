@@ -1,4 +1,3 @@
-use cached::proc_macro::cached;
 use itertools::Itertools;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use std::ops::Range;
@@ -13,16 +12,17 @@ pub fn part_1() -> String {
     let seeds = parse_seeds(s[0]);
     let categories = parse_categories(s);
 
-    let mut outputs = Vec::new();
-    for seed in seeds {
-        let mut output = seed;
-        for category in &categories {
-            output = category.map(output);
-        }
-        outputs.push(output);
-    }
-
-    let min = outputs.iter().min().unwrap();
+    let min = seeds
+        .iter()
+        .map(|seed| {
+            let mut output = *seed;
+            for category in &categories {
+                output = category.map(output);
+            }
+            output
+        })
+        .min()
+        .unwrap();
 
     format!("{}", min)
 }
@@ -56,50 +56,6 @@ pub fn part_2() -> String {
         .unwrap();
 
     format!("{}", min)
-}
-
-fn parse_seeds(input: &str) -> Vec<usize> {
-    let mut seeds = Vec::new();
-    let seed_s = input.split(" ").skip(1);
-    for seed in seed_s {
-        seeds.push(seed.parse::<usize>().unwrap());
-    }
-    seeds
-}
-
-fn parse_seed_ranges(input: &str) -> Vec<Range<usize>> {
-    let seed_s = input.split(" ").skip(1).collect_vec();
-    seed_s
-        .chunks_exact(2)
-        .map(|x| {
-            let start = x[0].parse::<usize>().unwrap();
-            let len = x[1].parse::<usize>().unwrap();
-            start..start + len
-        })
-        .collect_vec()
-}
-
-fn parse_categories(s: Vec<&str>) -> Vec<Category> {
-    let mut categories = Vec::new();
-    for category in &s[1..] {
-        let cat = parse_category(category);
-        categories.push(cat);
-    }
-    categories
-}
-
-fn parse_category(input: &str) -> Category {
-    let mut maps = Vec::new();
-    let lines = input.split("\n").skip(1).collect_vec();
-    for line in lines {
-        let mut s = line.split(" ");
-        let target = s.next().unwrap().parse::<usize>().unwrap();
-        let source = s.next().unwrap().parse::<usize>().unwrap();
-        let len = s.next().unwrap().parse::<usize>().unwrap();
-        let map = Map::new(source, target, len);
-        maps.push(map);
-    }
-    Category::new(maps)
 }
 
 #[derive(Debug, Clone)]
@@ -144,4 +100,48 @@ impl Category {
         }
         input
     }
+}
+
+fn parse_seeds(input: &str) -> Vec<usize> {
+    let mut seeds = Vec::new();
+    let seed_s = input.split(' ').skip(1);
+    for seed in seed_s {
+        seeds.push(seed.parse::<usize>().unwrap());
+    }
+    seeds
+}
+
+fn parse_seed_ranges(input: &str) -> Vec<Range<usize>> {
+    let seed_s = input.split(' ').skip(1).collect_vec();
+    seed_s
+        .chunks_exact(2)
+        .map(|x| {
+            let start = x[0].parse::<usize>().unwrap();
+            let len = x[1].parse::<usize>().unwrap();
+            start..start + len
+        })
+        .collect_vec()
+}
+
+fn parse_categories(s: Vec<&str>) -> Vec<Category> {
+    let mut categories = Vec::new();
+    for category in &s[1..] {
+        let cat = parse_category(category);
+        categories.push(cat);
+    }
+    categories
+}
+
+fn parse_category(input: &str) -> Category {
+    let mut maps = Vec::new();
+    let lines = input.split('\n').skip(1).collect_vec();
+    for line in lines {
+        let mut s = line.split(' ');
+        let target = s.next().unwrap().parse::<usize>().unwrap();
+        let source = s.next().unwrap().parse::<usize>().unwrap();
+        let len = s.next().unwrap().parse::<usize>().unwrap();
+        let map = Map::new(source, target, len);
+        maps.push(map);
+    }
+    Category::new(maps)
 }
