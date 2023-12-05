@@ -10,17 +10,11 @@ const INPUT: &str = include_str!("input.txt");
 pub fn part_1() -> String {
     let s = INPUT.split("\n\n").collect_vec();
     let seeds = parse_seeds(s[0]);
-    let categories = parse_categories(s);
+    let cats = parse_categories(s);
 
     let min = seeds
         .iter()
-        .map(|seed| {
-            let mut output = *seed;
-            for category in &categories {
-                output = category.map(output);
-            }
-            output
-        })
+        .map(|seed| cats.iter().fold(*seed, |s, cat| cat.translate(s)))
         .min()
         .unwrap();
 
@@ -33,22 +27,22 @@ pub fn part_2() -> String {
     let seeds = parse_seed_ranges(s[0]);
     let categories = parse_categories(s);
 
-    let res_len = seeds.iter().map(|x| x.len()).sum::<usize>();
-    dbg!(res_len);
+    let min = 0;
+    format!("{}", min)
+}
+
+#[inline(always)]
+#[allow(dead_code)]
+pub fn part_2_brute_force() -> String {
+    let s = INPUT.split("\n\n").collect_vec();
+    let seeds = parse_seed_ranges(s[0]);
+    let cats = parse_categories(s);
 
     let min = seeds
         .into_iter()
         .map(|sr| {
-            println!("{:?}", sr);
-
             sr.into_par_iter()
-                .map(|s| {
-                    let mut output = s;
-                    for category in &categories {
-                        output = category.map(output);
-                    }
-                    output
-                })
+                .map(|seed| cats.iter().fold(seed, |s, cat| cat.translate(s)))
                 .min()
                 .unwrap()
         })
@@ -92,7 +86,7 @@ impl Category {
     }
 
     #[inline(always)]
-    pub fn map(&self, input: usize) -> usize {
+    pub fn translate(&self, input: usize) -> usize {
         for map in &self.maps {
             if let Some(output) = map.map(input) {
                 return output;
