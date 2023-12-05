@@ -1,6 +1,7 @@
 use std::ops::Range;
 
 use itertools::Itertools;
+use rayon::iter::{IndexedParallelIterator, IntoParallelRefMutIterator, ParallelIterator};
 
 crate::AocDay!(5);
 
@@ -28,7 +29,33 @@ pub fn part_1() -> String {
 
 #[inline(always)]
 pub fn part_2() -> String {
-    format!("")
+    let s = INPUT.split("\n\n").collect_vec();
+    let seeds = parse_seed_ranges(s[0]);
+    let categories = parse_categories(s);
+
+    let res_len = seeds.iter().map(|x| x.len()).sum::<usize>();
+
+    let mut outputs = vec![0; res_len];
+    let flat_seeds = seeds
+        .iter()
+        .map(|e| e.clone().collect_vec())
+        .flatten()
+        .collect_vec();
+
+    dbg!(flat_seeds.len());
+
+    outputs.par_iter_mut().enumerate().for_each(|(idx, e)| {
+        let seed = flat_seeds[idx];
+        let mut output = seed;
+        for category in &categories {
+            output = category.map(output);
+        }
+        *e = output;
+    });
+
+    let min = outputs.iter().min().unwrap();
+
+    format!("{}", min)
 }
 
 fn parse_seeds(input: &str) -> Vec<usize> {
@@ -38,6 +65,18 @@ fn parse_seeds(input: &str) -> Vec<usize> {
         seeds.push(seed.parse::<usize>().unwrap());
     }
     seeds
+}
+
+fn parse_seed_ranges(input: &str) -> Vec<Range<usize>> {
+    let seed_s = input.split(" ").skip(1).collect_vec();
+    seed_s
+        .chunks_exact(2)
+        .map(|x| {
+            let start = x[0].parse::<usize>().unwrap();
+            let len = x[1].parse::<usize>().unwrap();
+            start..start + len
+        })
+        .collect_vec()
 }
 
 fn parse_categories(s: Vec<&str>) -> Vec<Category> {
