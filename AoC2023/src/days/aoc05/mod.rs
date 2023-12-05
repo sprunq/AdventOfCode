@@ -22,18 +22,8 @@ pub fn part_1() -> String {
 }
 
 #[inline(always)]
-pub fn part_2() -> String {
-    let s = INPUT.split("\n\n").collect_vec();
-    let seeds = parse_seed_ranges(s[0]);
-    let categories = parse_categories(s);
-
-    let min = 0;
-    format!("{}", min)
-}
-
-#[inline(always)]
 #[allow(dead_code)]
-pub fn part_2_brute_force() -> String {
+pub fn part_2() -> String {
     let s = INPUT.split("\n\n").collect_vec();
     let seeds = parse_seed_ranges(s[0]);
     let cats = parse_categories(s);
